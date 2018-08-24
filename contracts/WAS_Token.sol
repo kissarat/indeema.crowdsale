@@ -27,7 +27,7 @@ contract SafeMath {
     }
 }
  
-contract ERC223Token is ERC223, SafeMath {
+contract WAS_Token is ERC223, SafeMath {
 
   mapping(address => uint) balances;
   
