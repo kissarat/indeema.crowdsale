@@ -31,10 +31,10 @@ contract ERC223Token is ERC223, SafeMath {
 
   mapping(address => uint) balances;
   
-  string public name;
-  string public symbol;
-  uint8 public decimals;
-  uint256 public totalSupply;
+  string public name = "WasiHub";
+  string public symbol = "WAS";
+  uint8 public decimals = 0;
+  uint256 public totalSupply = 260260676; 
   
   
   // Function to access name of token .
