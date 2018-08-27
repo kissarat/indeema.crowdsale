@@ -54,6 +54,21 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
   }
 
 
+  /**
+   * @dev Extend parent behavior requiring crowdsale to be unpaused.
+   * @param _beneficiary Token beneficiary
+   * @param _weiAmount Amount of wei contributed
+   */
+  function _preValidatePurchase(
+    address _beneficiary,
+    uint256 _weiAmount
+  )
+    internal
+    whenNotPaused()
+  {
+    require(_beneficiary != address(0));
+    require(_weiAmount != 0);
+  }
   
 
 }
