@@ -66,8 +66,7 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     internal
     whenNotPaused()
   {
-    require(_beneficiary != address(0));
-    require(_weiAmount != 0);
+    super._preValidatePurchase(_beneficiary, _weiAmount);
   }
   
 
