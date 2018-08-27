@@ -7,13 +7,13 @@ contract WAS_CrowdsaleReservations {
   using SafeMath for uint256;
 
   uint256 public reserveTokensTeamPercent = 5;
-  uint256 public reserveTokensTeam;
+  uint256 public reservedTokensTeam;
 
   constructor(uint256 _totalSupply) public {
     calculateReservations(_totalSupply);
   }
 
   function calculateReservations(uint256 _totalSupply) private {
-    reserveTokensTeam = _totalSupply.mul(reserveTokensTeamPercent).div(100);
+    reservedTokensTeam = _totalSupply.mul(reserveTokensTeamPercent).div(100);
   }
 }
