@@ -1,5 +1,5 @@
 let mock = {
-    tokenName: "WasiHub",
+    tokenName: "Wasi",
     tokenSymbol: "WAS",
     tokenDecimals: 0,
     totalSupply: 260260676
