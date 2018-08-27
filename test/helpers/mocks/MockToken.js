@@ -1,7 +1,8 @@
 let mock = {
-    tokenName: "Impressive Token",
-    tokenSymbol: "IMP",
-    tokenDecimals: 4
+    tokenName: "WasiHub",
+    tokenSymbol: "WAS",
+    tokenDecimals: 0,
+    totalSupply: 260260676
 };
 
 export default function mockToken() {
