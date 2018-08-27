@@ -46,7 +46,7 @@ contract("Whitelist", (accounts) => {
 
         it("should let purchase if whitelisted", async () => {
             let whitelistedAddr = accounts[1];
-            crowdsale.addAddressToWhitelist(whitelistedAddr);
+            await crowdsale.addAddressToWhitelist(whitelistedAddr);
 
             await crowdsale.sendTransaction({
                 from: whitelistedAddr,
