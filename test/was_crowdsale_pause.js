@@ -31,9 +31,11 @@ contract("Pausable", (accounts) => {
     await token.transferOwnership(crowdsale.address);
     await crowdsale.mintTotalSupply();
 
+    //  increase time to open
     increaseTimeTo(timings[0] + duration.minutes(1));
     assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
 
+    //  add to whitelist
     await crowdsale.addAddressToWhitelist(whitelisted_1);
     assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
   });
