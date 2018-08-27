@@ -55,7 +55,7 @@ contract("Pausable", (accounts) => {
   });
 
 
-  describe.only("pause in action", () => {
+  describe("pause in action", () => {
     it("should not purchase if paused", async () => {
       await crowdsale.pause();
 
