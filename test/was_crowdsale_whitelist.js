@@ -1,7 +1,6 @@
 const WAS_Token = artifacts.require("WAS_Token");
 const WAS_Crowdsale = artifacts.require("WAS_Crowdsale");
 
-import mockToken from "./helpers/mocks/mockToken";
 import mockCrowdsale from "./helpers/mocks/mockCrowdsale";
 
 import expectThrow from './helpers/expectThrow';
@@ -18,7 +17,6 @@ contract("Whitelist", (accounts) => {
     let token;
     let crowdsale;
 
-    let mockTokenData = mockToken();
     let mockCrowdsaleData = mockCrowdsale();
 
     beforeEach("setup", async () => {
