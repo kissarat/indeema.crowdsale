@@ -1,8 +1,6 @@
 const WAS_Token = artifacts.require("WAS_Token");
 const WAS_Crowdsale = artifacts.require("WAS_Crowdsale");
 
-const BigNumber = require('bignumber.js');
-
 import mockToken from "./helpers/mocks/mockToken";
 import mockCrowdsale from "./helpers/mocks/mockCrowdsale";
 
