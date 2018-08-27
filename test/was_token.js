@@ -1,19 +1,17 @@
 const WAS_Token = artifacts.require("WAS_Token");
 
 const BigNumber = require('bignumber.js');
-let mockTokenData = mockToken();
 
-import mockToken from "./helpers/mocks/MockToken";
-
+import mockToken from "./helpers/mocks/mockToken";
+import expectThrow from './helpers/expectThrow';
 import {
     advanceBlock
 } from './helpers/advanceToBlock.js';
 
-import expectThrow from './helpers/expectThrow';
-
 
 contract("WAS_Token", (accounts) => {
     let token;
+    let mockTokenData = mockToken();
 
     before("setup", async () => {
         token = await WAS_Token.deployed();
