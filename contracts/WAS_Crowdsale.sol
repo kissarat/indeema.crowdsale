@@ -98,8 +98,8 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
   )
     internal
     whenNotPaused()
+    onlyWhileOpen()
   {
-    require(anyStageRunning(), "no stages are running now");
     super._preValidatePurchase(_beneficiary, _weiAmount);
   }
 
