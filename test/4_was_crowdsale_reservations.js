@@ -1,6 +1,9 @@
 const WAS_Token = artifacts.require("WAS_Token");
 const WAS_Crowdsale = artifacts.require("WAS_Crowdsale");
 
+const BigNumber = require("bignumber.js");
+
+import mockToken from "./helpers/mocks/mockToken";
 import mockCrowdsale from "./helpers/mocks/mockCrowdsale";
 
 import expectThrow from './helpers/expectThrow';
@@ -13,10 +16,11 @@ import increaseTime, {
 } from './helpers/increaseTime';
 import latestTime from './helpers/latestTime';
 
-contract("Pausable", (accounts) => {
+contract("Reservations", (accounts) => {
   let token;
   let crowdsale;
   let whitelisted_1 = accounts[1];
+  const TEAM_WALLET = accounts[8];
 
   let mockCrowdsaleData = mockCrowdsale();
 
@@ -24,7 +28,6 @@ contract("Pausable", (accounts) => {
     await advanceBlock();
 
     const WALLET = accounts[9];
-    const TEAM_WALLET = accounts[8];
     let timings = [latestTime() + duration.minutes(1), latestTime() + duration.weeks(1)];
 
     token = await WAS_Token.new();
@@ -41,41 +44,9 @@ contract("Pausable", (accounts) => {
     assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
   });
 
-  describe("start / stop pause", () => {
-    it("should validate not owner can not pause", async () => {
-      await expectThrow(crowdsale.pause({
-        from: accounts[1]
-      }), "not owner can not pause");
-    });
-
-    it("should validate not owner can not unpause", async () => {
-      await crowdsale.pause();
-
-      await expectThrow(crowdsale.unpause({
-        from: accounts[1]
-      }), "not owner can not unpause");
-    });
-  });
-
-
-  describe("pause in action", () => {
-    it("should not purchase if paused", async () => {
-      await crowdsale.pause();
-
-      await expectThrow(crowdsale.sendTransaction({
-        from: whitelisted_1,
-        value: 1
-      }), "should throw if purchase whilepaused");
-    });
-
-    it("should restore purchase after unpause", async () => {
-      await crowdsale.pause();
-      await crowdsale.unpause();
-
-      crowdsale.sendTransaction({
-        from: whitelisted_1,
-        value: 1
-      });
+  describe.only("validate tokens transfer", () => {
+    it("should validate team tokens were transfered to team address", async () => {
+      assert.equal(new BigNumber(await token.balanceOf.call(TEAM_WALLET)).toNumber(), new BigNumber(mockToken().totalSupply).multipliedBy(0.05).decimalPlaces(0).minus(1).toNumber(), "wrong team token balance");
     });
   });
 });

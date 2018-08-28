@@ -22,9 +22,15 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     token = WAS_Token(_token);
   }
 
-  function mintTotalSupply() public onlyOwner {
+  function mintTotalSupplyAndTeam(address _teamAddress) public onlyOwner {
+    require(_teamAddress != address(0), "team address can not be 0");
+    require(reservedTokensTeam > 0, "team tokens can not be 0");
+
+    token.mint(_teamAddress, reservedTokensTeam);
+
     uint256 purchaseTokens = token.totalSupplyLimit().sub(reservedTokensTeam);
     token.mint(address(this), purchaseTokens);
+
     token.finishMinting();
   }
 

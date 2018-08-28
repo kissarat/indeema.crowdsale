@@ -7,6 +7,7 @@ module.exports = function (deployer, network, accounts) {
     //  TODO: change before deploy
     const RATE = 100;
     const WALLET = accounts[9];
+    const TEAM_WALLET = accounts[8];
     let timings = [web3.eth.getBlock("latest").timestamp + IncreaseTime.duration.minutes(1), web3.eth.getBlock("latest").timestamp + IncreaseTime.duration.weeks(1)];
     //  TODO: change before deploy
 
@@ -15,7 +16,9 @@ module.exports = function (deployer, network, accounts) {
 
         await deployer.deploy(WAS_Crowdsale, RATE, WALLET, token.address, timings);
         let crowdsale = await WAS_Crowdsale.deployed();
+        //  1
         await token.transferOwnership(crowdsale.address);
-        await crowdsale.mintTotalSupply();
+        //  2
+        await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
     });
 };

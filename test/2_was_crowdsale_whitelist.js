@@ -23,12 +23,13 @@ contract("Whitelist", (accounts) => {
         await advanceBlock();
 
         const WALLET = accounts[9];
+        const TEAM_WALLET = accounts[8];
         let timings = [latestTime() + duration.minutes(1), latestTime() + duration.weeks(1)];
 
         token = await WAS_Token.new();
         crowdsale = await WAS_Crowdsale.new(mockCrowdsaleData.rate, WALLET, token.address, timings);
         await token.transferOwnership(crowdsale.address);
-        await crowdsale.mintTotalSupply();
+        await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
 
         //  increase time to open
         increaseTimeTo(timings[0] + duration.minutes(1));
