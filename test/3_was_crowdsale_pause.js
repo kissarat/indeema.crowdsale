@@ -16,7 +16,7 @@ import latestTime from './helpers/latestTime';
 contract("Pausable", (accounts) => {
   let token;
   let crowdsale;
-  let whitelisted_1 = accounts[1];
+  const WHITELISTED_1 = accounts[1];
 
   let mockCrowdsaleData = mockCrowdsale();
 
@@ -49,8 +49,8 @@ contract("Pausable", (accounts) => {
     assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
 
     //  add to whitelist
-    await crowdsale.addAddressToWhitelist(whitelisted_1);
-    assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
+    await crowdsale.addAddressToWhitelist(WHITELISTED_1);
+    assert.isTrue(await crowdsale.whitelist.call(WHITELISTED_1), "WHITELISTED_1 should be whitelisted on beforeEach");
   });
 
   describe("start / stop pause", () => {
@@ -75,7 +75,7 @@ contract("Pausable", (accounts) => {
       await crowdsale.pause();
 
       await expectThrow(crowdsale.sendTransaction({
-        from: whitelisted_1,
+        from: WHITELISTED_1,
         value: web3.toWei(1, "ether")
       }), "should throw if purchase whilepaused");
     });
@@ -85,7 +85,7 @@ contract("Pausable", (accounts) => {
       await crowdsale.unpause();
 
       crowdsale.sendTransaction({
-        from: whitelisted_1,
+        from: WHITELISTED_1,
         value: web3.toWei(1, "ether")
       });
     });

@@ -19,7 +19,7 @@ import latestTime from './helpers/latestTime';
 contract("Reservations", (accounts) => {
   let token;
   let crowdsale;
-  let whitelisted_1 = accounts[1];
+  const WHITELISTED_1 = accounts[1];
   const TEAM_WALLET = accounts[8];
 
   let mockCrowdsaleData = mockCrowdsale();
