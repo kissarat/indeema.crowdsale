@@ -47,6 +47,9 @@ contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations {
     revert();
   }
 
+  function updateStageRateETH(uint256 _stage, uint256 _rateETH) public onlyOwner {
+    rateETH[_stage] = _rateETH;
+  } 
 
 
   /**
