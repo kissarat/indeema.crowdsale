@@ -21,10 +21,6 @@ contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
     stagePurchaseTokensMinimum = [0, 100];
   }
 
-  function anyStageRunning() public view returns (bool) {
-    return currentStage() >= 0;
-  } 
-
   function currentRateETH() public view returns (uint256) {
     uint256 stage = currentStage();
     return rateETH[stage];
