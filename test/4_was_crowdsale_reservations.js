@@ -44,6 +44,17 @@ contract("Reservations", (accounts) => {
     assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
   });
 
+  describe.only("reservation amounts", () => {
+    it("should vlidate team reserve tokens", async () => {
+      assert.equal(new BigNumber(await token.balanceOf(TEAM_WALLET)).toNumber(), 13013033, "wrong team reserve tokens amount");
+    });
+
+    it("should vlidate purchase reserve tokens", async () => {
+      assert.equal(new BigNumber(await token.balanceOf(crowdsale.address)).toNumber(), 247247643, "wrong purchase reserve tokens amount");
+    });
+
+  });
+
   describe("validate tokens transfer", () => {
     it("should validate team tokens were transfered to team address", async () => {
       assert.equal(new BigNumber(await token.balanceOf.call(TEAM_WALLET)).toNumber(), new BigNumber(mockToken().totalSupply).multipliedBy(0.05).decimalPlaces(0).minus(1).toNumber(), "wrong team token balance");
