@@ -27,21 +27,26 @@ contract("Reservations", (accounts) => {
   beforeEach("setup", async () => {
     await advanceBlock();
 
+    const RATES_ETH = [300, 500]; //  tokens per ETH
     const WALLET = accounts[9];
-    let timings = [latestTime() + duration.minutes(1), latestTime() + duration.weeks(1)];
+    const TEAM_WALLET = accounts[8];
+    let openingTimings = [];
+    let closingTimings = [];
+
+    for (let i = 0; i < 2; i++) {
+      if (i == 0) {
+        openingTimings[i] = latestTime() + duration.minutes(1);
+      } else {
+        openingTimings[i] = closingTimings[i - 1] + 1;
+      }
+
+      closingTimings[i] = openingTimings[i] + duration.weeks(1);
+    }
 
     token = await WAS_Token.new();
-    crowdsale = await WAS_Crowdsale.new(mockCrowdsaleData.rate, WALLET, token.address, timings);
+    crowdsale = await WAS_Crowdsale.new(WALLET, token.address, RATES_ETH, openingTimings, closingTimings);
     await token.transferOwnership(crowdsale.address);
     await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
-
-    //  increase time to open
-    increaseTimeTo(timings[0] + duration.minutes(1));
-    assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
-
-    //  add to whitelist
-    await crowdsale.addAddressToWhitelist(whitelisted_1);
-    assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
   });
 
   describe("reservation amounts", () => {
@@ -49,10 +54,13 @@ contract("Reservations", (accounts) => {
       assert.equal(new BigNumber(await token.balanceOf(TEAM_WALLET)).toNumber(), 13013033, "wrong team reserve tokens amount");
     });
 
-    it("should vlidate purchase reserve tokens", async () => {
-      assert.equal(new BigNumber(await token.balanceOf(crowdsale.address)).toNumber(), 247247643, "wrong purchase reserve tokens amount");
+    it("should vlidate total purchase reserve tokens for this and future stages", async () => {
+      assert.equal(new BigNumber(await token.balanceOf(crowdsale.address)).toNumber(), 247247643, "wrong total purchase reserve tokens for this and future stages");
     });
 
+    it("should vlidate purchase reserve tokens for this stage only", async () => {
+      assert.equal(new BigNumber(await crowdsale.reservedTokensCrowdsalePurchase.call()).toNumber(), 50000000, "wrong purchase reserve tokens for this stage only");
+    });
   });
 
   describe("validate tokens transfer", () => {
