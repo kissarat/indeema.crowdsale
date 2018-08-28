@@ -59,6 +59,23 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     token.burnUnsoldTokens();
   }
 
+   /**
+   * @dev Transfers the current balance to the owner and terminates the contract.
+   */
+  function destroy() public onlyOwner {
+    require(hasClosed(), "crowdsale must be closed");
+    require(isFinalized, "crowdsale must be finalized");
+
+    selfdestruct(owner);
+  }
+
+  function destroyAndSend(address _recipient) public onlyOwner {
+    require(hasClosed(), "crowdsale must be closed");
+    require(isFinalized, "crowdsale must be finalized");
+
+    selfdestruct(_recipient);
+  }
+
 
   /**
    * @dev Extend parent behavior requiring crowdsale to be unpaused.
