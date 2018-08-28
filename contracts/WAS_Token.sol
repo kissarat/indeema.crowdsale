@@ -12,6 +12,7 @@ contract WAS_Token is MintableToken, DetailedERC20 {
 
     }
 
+    //  will be used in next Crowdale implementations
     function burnUnsoldTokens() public onlyOwner {
         balances[owner] = 0;
     }

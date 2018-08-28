@@ -2,14 +2,14 @@ pragma solidity ^0.4.24;
 
 
 import "./WAS_Token.sol";
-import "./WAS_CrowdsaleReservations.sol";
+import "./WAS_Crowdsale_Stages.sol";
 
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../node_modules/openzeppelin-solidity/contracts/crowdsale/validation/WhitelistedCrowdsale.sol";
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Destructible.sol";
 import "../node_modules/openzeppelin-solidity/contracts/crowdsale/distribution/FinalizableCrowdsale.sol";
 
-contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructible, Pausable, WAS_CrowdsaleReservations {
+contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructible, Pausable, WAS_Crowdsale_Stages {
   WAS_Token token;
 
   constructor(uint256 _rate, address _wallet, ERC20 _token, uint256[] _openingClosingTimings) 
@@ -49,6 +49,13 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     closingTime = _time;
   }
 
+  function manualTransfer(address _to, uint256 _tokenAmount) public onlyOwner {
+    require(tokensCrowdsalePurchased.add(_tokenAmount) <= reservedTokensCrowdsalePurchase, "not enough tokens to manually transfer");
+    tokensCrowdsalePurchased = tokensCrowdsalePurchased.add(_tokenAmount);
+
+    token.transfer(_to, _tokenAmount);
+  }
+
 
   /**
    * @dev Can be overridden to add finalization logic. The overriding function
@@ -56,7 +63,10 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
    * executed entirely.
    */
   function finalization() internal {
-    token.burnUnsoldTokens();
+    uint256 unpurchasedTokens = token.balanceOf(address(this));
+    token.transfer(owner, unpurchasedTokens);
+
+    super.finalization();
   }
 
    /**
@@ -89,8 +99,39 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     internal
     whenNotPaused()
   {
+    require(anyStageRunning(), "no stages are running now");
     super._preValidatePurchase(_beneficiary, _weiAmount);
   }
+
+  /**
+   * @dev Override to extend the way in which ether is converted to tokens.
+   * @param _weiAmount Value in wei to be converted into tokens
+   * @return Number of tokens that can be purchased with the specified _weiAmount
+   */
+  function _getTokenAmount(uint256 _weiAmount)
+    internal view returns (uint256)
+  {
+    uint256 rateETH = currentRateETH();
+    return _weiAmount.mul(rateETH).div(uint256(10*(10**18)));
+  }
   
+  /**
+   * @dev Executed when a purchase has been validated and is ready to be executed. Not necessarily emits/sends tokens.
+   * @param _beneficiary Address receiving the tokens
+   * @param _tokenAmount Number of tokens to be purchased
+   */
+  function _processPurchase(
+    address _beneficiary,
+    uint256 _tokenAmount
+  )
+    internal
+  {
+    require(_tokenAmount >= stagePurchaseTokensMinimum[currentStage()], "token amount is less than minimum for stage");
+
+    require(tokensCrowdsalePurchased.add(_tokenAmount) <= reservedTokensCrowdsalePurchase, "not enough tokens to purchase");
+    tokensCrowdsalePurchased = tokensCrowdsalePurchased.add(_tokenAmount);
+
+    super._processPurchase(_beneficiary, _tokenAmount);
+  }
 
 }
