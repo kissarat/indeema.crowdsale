@@ -71,4 +71,24 @@ contract("Finalizable", (accounts) => {
       }), "not owner can not finalize if closed");
     });
   });
+
+  describe("tokens burning", () => {
+    it("should validate tokens are burnt", async () => {
+      console.log(new BigNumber(await token.balanceOf(crowdsale.address)).toNumber());
+      // await crowdsale.sendTransaction({
+      //   from: whitelisted_1,
+      //   value: web3.toWei(10, "ether")
+      // });
+      // let tokensBeforeFinalize = new BigNumber(await token.balanceOf(crowdsale.address));
+      // console.log(new BigNumber(await token.balanceOf(crowdsale.address)).toNumber());
+
+      // //  increase time to close
+      // increaseTimeTo(timings[1] + duration.minutes(1));
+
+      // //  finalize
+      // await crowdsale.finalize();
+
+      // console.log(new BigNumber(await token.balanceOf(crowdsale.address)));
+    });
+  });
 });
