@@ -2,9 +2,10 @@ pragma solidity ^0.4.24;
 
 
 import "./WAS_CrowdsaleReservations.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
-contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations {
+contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
   uint256[] rateETH;
   uint256[] openingTimings;
   uint256[] closingTimings;
