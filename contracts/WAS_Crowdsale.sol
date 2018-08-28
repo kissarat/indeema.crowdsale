@@ -12,9 +12,19 @@ import "../node_modules/openzeppelin-solidity/contracts/crowdsale/distribution/F
 contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructible, Pausable, WAS_Crowdsale_Stages {
   WAS_Token token;
 
-  constructor(uint256 _rate, address _wallet, ERC20 _token, uint256[] _openingClosingTimings) 
-  Crowdsale(_rate, _wallet, _token)
-  TimedCrowdsale(_openingClosingTimings[0], _openingClosingTimings[1])
+  /**
+   * @dev Reverts if not in crowdsale time range.
+   */
+  modifier onlyWhileOpen {
+    // solium-disable-next-line security/no-block-members
+    require(currentStage() >= 0, "no stages are running now");
+    _;
+  }
+
+  constructor(address _wallet, ERC20 _token, uint256[] _rateETH, uint256[] _openingTimings, uint256[] _closingTimings) 
+  Crowdsale(1, _wallet, _token)
+  TimedCrowdsale(_openingTimings[0], _closingTimings[_closingTimings.length - 1])
+  WAS_Crowdsale_Stages(_rateETH, _openingTimings, _closingTimings)
   WAS_CrowdsaleReservations(WAS_Token(_token).totalSupplyLimit())
   public {
     require(_token != address(0), "token address cannt be 0");
