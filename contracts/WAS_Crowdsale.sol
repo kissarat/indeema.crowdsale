@@ -60,6 +60,7 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
   }
 
   function manualTransfer(address _to, uint256 _tokenAmount) public onlyOwner {
+    require(currentStage() == 0, "manual transfer allowed during first stage only");
     require(tokensCrowdsalePurchased.add(_tokenAmount) <= reservedTokensCrowdsalePurchase, "not enough tokens to manually transfer");
     tokensCrowdsalePurchased = tokensCrowdsalePurchased.add(_tokenAmount);
 
