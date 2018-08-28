@@ -52,7 +52,6 @@ contract("Destructible", (accounts) => {
     it("should validate owner can not destoy if closed, but not finalized", async () => {
       //  increase time to close
       increaseTimeTo(timings[1] + duration.minutes(1));
-      assert.isTrue(await crowdsale.hasClosed.call(), "crowdsale should be closed on beforeEach");
 
       await expectThrow(crowdsale.destroy(), "owner can not destroy if closed, but not finalized");
     });
@@ -60,7 +59,6 @@ contract("Destructible", (accounts) => {
     it("should validate owner can destoy when closed and finalized", async () => {
       //  increase time to close
       increaseTimeTo(timings[1] + duration.minutes(1));
-      assert.isTrue(await crowdsale.hasClosed.call(), "crowdsale should be closed on beforeEach");
 
       //  finalize
       await crowdsale.finalize();
@@ -77,7 +75,6 @@ contract("Destructible", (accounts) => {
     it("should validate not owner can not destoy if closed, but not finalized", async () => {
       //  increase time to close
       increaseTimeTo(timings[1] + duration.minutes(1));
-      assert.isTrue(await crowdsale.hasClosed.call(), "crowdsale should be closed on beforeEach");
 
       await expectThrow(crowdsale.destroy(), "not owner can not destroy if closed, but not finalized");
     });
@@ -85,7 +82,6 @@ contract("Destructible", (accounts) => {
     it("should validate not owner can not destoy when closed and finalized", async () => {
       //  increase time to close
       increaseTimeTo(timings[1] + duration.minutes(1));
-      assert.isTrue(await crowdsale.hasClosed.call(), "crowdsale should be closed on beforeEach");
 
       //  finalize
       await crowdsale.finalize();
