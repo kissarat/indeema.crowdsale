@@ -44,7 +44,7 @@ contract("Reservations", (accounts) => {
     assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
   });
 
-  describe.only("validate tokens transfer", () => {
+  describe("validate tokens transfer", () => {
     it("should validate team tokens were transfered to team address", async () => {
       assert.equal(new BigNumber(await token.balanceOf.call(TEAM_WALLET)).toNumber(), new BigNumber(mockToken().totalSupply).multipliedBy(0.05).decimalPlaces(0).minus(1).toNumber(), "wrong team token balance");
     });
