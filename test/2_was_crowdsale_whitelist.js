@@ -22,17 +22,29 @@ contract("Whitelist", (accounts) => {
     beforeEach("setup", async () => {
         await advanceBlock();
 
+        const RATES_ETH = [300, 500]; //  tokens per ETH
         const WALLET = accounts[9];
         const TEAM_WALLET = accounts[8];
-        let timings = [latestTime() + duration.minutes(1), latestTime() + duration.weeks(1)];
+        let openingTimings = [];
+        let closingTimings = [];
+
+        for (let i = 0; i < 2; i++) {
+            if (i == 0) {
+                openingTimings[i] = latestTime() + duration.minutes(1);
+            } else {
+                openingTimings[i] = closingTimings[i - 1] + 1;
+            }
+
+            closingTimings[i] = openingTimings[i] + duration.weeks(1);
+        }
 
         token = await WAS_Token.new();
-        crowdsale = await WAS_Crowdsale.new(mockCrowdsaleData.rate, WALLET, token.address, timings);
+        crowdsale = await WAS_Crowdsale.new(WALLET, token.address, RATES_ETH, openingTimings, closingTimings);
         await token.transferOwnership(crowdsale.address);
         await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
 
         //  increase time to open
-        increaseTimeTo(timings[0] + duration.minutes(1));
+        increaseTimeTo(openingTimings[0] + duration.minutes(1));
         assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
     });
 
@@ -42,7 +54,7 @@ contract("Whitelist", (accounts) => {
         it("should not purchase if not whitelisted", async () => {
             await expectThrow(crowdsale.sendTransaction({
                 from: accounts[1],
-                value: 1
+                value: web3.toWei(1, "ether")
             }), "should throw if not whitelisted purchase");
         });
 
@@ -52,7 +64,7 @@ contract("Whitelist", (accounts) => {
 
             await crowdsale.sendTransaction({
                 from: whitelistedAddr,
-                value: 1
+                value: web3.toWei(1, "ether")
             });
         });
     });
