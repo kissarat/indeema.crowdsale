@@ -44,7 +44,7 @@ contract("Reservations", (accounts) => {
     assert.isTrue(await crowdsale.whitelist.call(whitelisted_1), "whitelisted_1 should be whitelisted on beforeEach");
   });
 
-  describe.only("reservation amounts", () => {
+  describe("reservation amounts", () => {
     it("should vlidate team reserve tokens", async () => {
       assert.equal(new BigNumber(await token.balanceOf(TEAM_WALLET)).toNumber(), 13013033, "wrong team reserve tokens amount");
     });
