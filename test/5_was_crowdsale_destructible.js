@@ -69,7 +69,7 @@ contract("Destructible", (accounts) => {
     });
   });
 
-  describe.only("destroying by not owner", () => {
+  describe("destroying by not owner", () => {
     it("should validate not owner can not destoy while not closed", async () => {
       await expectThrow(crowdsale.destroy(), "not owner can not destroy while not closed");
     });
