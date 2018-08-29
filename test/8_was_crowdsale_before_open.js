@@ -13,7 +13,7 @@ import increaseTime, {
 } from './helpers/increaseTime';
 import latestTime from './helpers/latestTime';
 
-contract("Pausable", (accounts) => {
+contract("Before open", (accounts) => {
   let token;
   let crowdsale;
   const WHITELISTED_1 = accounts[1];
@@ -44,50 +44,20 @@ contract("Pausable", (accounts) => {
     await token.transferOwnership(crowdsale.address);
     await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
 
-    //  increase time to open
-    increaseTimeTo(openingTimings[0] + duration.minutes(1));
-    assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
+    // //  increase time to open
+    // increaseTimeTo(openingTimings[0] + duration.minutes(1));
+    // assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
 
     //  add to whitelist
     await crowdsale.addAddressToWhitelist(WHITELISTED_1);
     assert.isTrue(await crowdsale.whitelist.call(WHITELISTED_1), "WHITELISTED_1 should be whitelisted on beforeEach");
   });
 
-  describe("start / stop pause", () => {
-    it("should validate not owner can not pause", async () => {
-      await expectThrow(crowdsale.pause({
-        from: accounts[1]
-      }), "not owner can not pause");
-    });
-
-    it("should validate not owner can not unpause", async () => {
-      await crowdsale.pause();
-
+  describe("before open", () => {
+    it("should not purchase before open", async () => {
       await expectThrow(crowdsale.unpause({
-        from: accounts[1]
-      }), "not owner can not unpause");
-    });
-  });
-
-
-  describe("pause in action", () => {
-    it("should not purchase if paused", async () => {
-      await crowdsale.pause();
-
-      await expectThrow(crowdsale.sendTransaction({
-        from: WHITELISTED_1,
-        value: web3.toWei(1, "ether")
-      }), "should throw if purchase whilepaused");
-    });
-
-    it("should restore purchase after unpause", async () => {
-      await crowdsale.pause();
-      await crowdsale.unpause();
-
-      crowdsale.sendTransaction({
-        from: WHITELISTED_1,
-        value: web3.toWei(1, "ether")
-      });
+        from: WHITELISTED_1
+      }), "should throw on purchase before open");
     });
   });
 });

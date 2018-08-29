@@ -22,13 +22,14 @@ contract("Destructible", (accounts) => {
     let openingTimings = [];
     let closingTimings = [];
 
+    const WHITELISTED_1 = accounts[1];
+
     beforeEach("setup", async () => {
         await advanceBlock();
 
-        const RATES_ETH = [300, 500]; //  tokens per ETH
+        const RATES_ETH = [5000, 4000]; //  tokens per ETH
         const WALLET = accounts[9];
         const TEAM_WALLET = accounts[8];
-        const WHITELISTED_1 = accounts[1];
 
         for (let i = 0; i < 2; i++) {
             if (i == 0) {

@@ -34,8 +34,8 @@ contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
 
   function currentStage() public view returns (uint256) {
     for (uint256 i = 0; i < closingTimings.length; i ++) {
-      if (block.timestamp <= closingTimings[0]) {
-        require(block.timestamp >= openingTimings[0], "now is not in single stage range");
+      if (block.timestamp <= closingTimings[i]) {
+        require(block.timestamp >= openingTimings[i], "now is not in single stage range");
 
         return i;
       }
@@ -47,6 +47,13 @@ contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
   function updateStageRateETH(uint256 _stage, uint256 _rateETH) public onlyOwner {
     rateETH[_stage] = _rateETH;
   } 
+
+  function updateOpeningAndClosingTimings(uint256[] _openingTimings, uint256[] _closingTimings) public onlyOwner {
+    validateOpeningAndClosingTimings(_openingTimings, _closingTimings);
+
+    openingTimings = _openingTimings;
+    closingTimings = _closingTimings;
+  }
 
 
   /**

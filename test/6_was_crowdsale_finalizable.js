@@ -28,7 +28,7 @@ contract("Finalizable", (accounts) => {
     beforeEach("setup", async () => {
         await advanceBlock();
 
-        const RATES_ETH = [300, 500]; //  tokens per ETH
+        const RATES_ETH = [5000, 4000]; //  tokens per ETH
         const WALLET = accounts[9];
 
         for (let i = 0; i < 2; i++) {
@@ -86,7 +86,7 @@ contract("Finalizable", (accounts) => {
         });
     });
 
-    describe.only("tokens tansferred to crowdsale owner balance", () => {
+    describe("tokens tansferred to crowdsale owner balance", () => {
         it("should validate tokens tansferred to crowdsale owner balance", async () => {
             await crowdsale.sendTransaction({
                 from: WHITELISTED_1,

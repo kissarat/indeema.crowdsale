@@ -32,6 +32,9 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     token = WAS_Token(_token);
   }
 
+  /**
+   * @dev Mints tokens to team address.
+   */
   function mintTotalSupplyAndTeam(address _teamAddress) public onlyOwner {
     require(_teamAddress != address(0), "team address can not be 0");
     require(reservedTokensTeam > 0, "team tokens can not be 0");
@@ -44,21 +47,17 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     token.finishMinting();
   }
 
+  /**
+   * @dev Determines if crowdsale has started.
+   * @return Whether crowdsale has started
+   */
   function hasOpened() public view returns (bool) {
     return now >= openingTime;
   }
 
-  function updateOpeningTime(uint256 _time) public onlyOwner {
-    require(_time > now);
-    require(!hasOpened(), "can not modify opening time after opening");
-    openingTime = _time;
-  }
-
-  function updateClosingTime(uint256 _time) public onlyOwner {
-    require(_time > openingTime, "closing time should be after opening time");
-    closingTime = _time;
-  }
-
+  /**
+   * @dev Manually transfers tokens.
+   */
   function manualTransfer(address _to, uint256 _tokenAmount) public onlyOwner {
     require(currentStage() == 0, "manual transfer allowed during first stage only");
     require(tokensCrowdsalePurchased.add(_tokenAmount) <= reservedTokensCrowdsalePurchase, "not enough tokens to manually transfer");
@@ -90,6 +89,10 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     selfdestruct(owner);
   }
 
+  /**
+   * @dev Transfers the current balance to the owner and terminates the recipient contract.
+   * @param _recipient Recipient address for funds
+   */
   function destroyAndSend(address _recipient) public onlyOwner {
     require(hasClosed(), "crowdsale must be closed");
     require(isFinalized, "crowdsale must be finalized");
@@ -123,7 +126,12 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
     internal view returns (uint256)
   {
     uint256 rateETH = currentRateETH();
-    return _weiAmount.mul(rateETH).div(uint256(10*(10**18)));
+    uint256 tokens = _weiAmount.mul(rateETH).div(uint256(10**18));
+    uint256 discount = currentDiscount(tokens);
+    if (discount > 0) {
+      tokens =  tokens.add(tokens.mul(discount).div(100));
+    }
+    return tokens;
   }
   
   /**

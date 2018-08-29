@@ -5,7 +5,7 @@ let IncreaseTime = require("../test/helpers/increaseTime.js");
 
 module.exports = function (deployer, network, accounts) {
     //  TODO: change before deploy
-    const RATES_ETH = [300, 500]; //  tokens per ETH
+    const RATES_ETH = [5000, 4000]; //  tokens per ETH
     const WALLET = accounts[9];
     const TEAM_WALLET = accounts[8];
     let openingTimings = [];

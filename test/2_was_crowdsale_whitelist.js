@@ -22,7 +22,7 @@ contract("Whitelist", (accounts) => {
     beforeEach("setup", async () => {
         await advanceBlock();
 
-        const RATES_ETH = [300, 500]; //  tokens per ETH
+        const RATES_ETH = [5000, 4000]; //  tokens per ETH
         const WALLET = accounts[9];
         const TEAM_WALLET = accounts[8];
         let openingTimings = [];
