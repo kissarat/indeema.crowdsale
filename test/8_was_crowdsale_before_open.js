@@ -44,10 +44,6 @@ contract("Before open", (accounts) => {
     await token.transferOwnership(crowdsale.address);
     await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
 
-    // //  increase time to open
-    // increaseTimeTo(openingTimings[0] + duration.minutes(1));
-    // assert.isTrue(await crowdsale.hasOpened.call(), "crowdsale should be open on beforeEach");
-
     //  add to whitelist
     await crowdsale.addAddressToWhitelist(WHITELISTED_1);
     assert.isTrue(await crowdsale.whitelist.call(WHITELISTED_1), "WHITELISTED_1 should be whitelisted on beforeEach");
