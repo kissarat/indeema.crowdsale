@@ -7,23 +7,12 @@ import "./WAS_Crowdsale_Stages.sol";
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../node_modules/openzeppelin-solidity/contracts/crowdsale/validation/WhitelistedCrowdsale.sol";
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Destructible.sol";
-import "../node_modules/openzeppelin-solidity/contracts/crowdsale/distribution/FinalizableCrowdsale.sol";
 
-contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructible, Pausable, WAS_Crowdsale_Stages {
+contract WAS_Crowdsale is WhitelistedCrowdsale, Destructible, Pausable, WAS_Crowdsale_Stages {
   WAS_Token token;
-
-  /**
-   * @dev Reverts if not in crowdsale time range.
-   */
-  modifier onlyWhileOpen {
-    // solium-disable-next-line security/no-block-members
-    require(currentStage() >= 0, "no stages are running now");
-    _;
-  }
 
   constructor(address _wallet, ERC20 _token, uint256[] _rateETH, uint256[] _openingTimings, uint256[] _closingTimings) 
   Crowdsale(1, _wallet, _token)
-  TimedCrowdsale(_openingTimings[0], _closingTimings[_closingTimings.length - 1])
   WAS_Crowdsale_Stages(_rateETH, _openingTimings, _closingTimings)
   WAS_CrowdsaleReservations(WAS_Token(_token).totalSupplyLimit())
   public {
@@ -48,18 +37,15 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
   }
 
   /**
-   * @dev Determines if crowdsale has started.
-   * @return Whether crowdsale has started
-   */
-  function hasOpened() public view returns (bool) {
-    return now >= openingTime;
-  }
-
-  /**
    * @dev Manually transfers tokens.
    */
   function manualTransfer(address _to, uint256 _tokenAmount) public onlyOwner {
-    require(currentStage() == 0, "manual transfer allowed during first stage only");
+    bool stageRunning;
+    uint256 stageIdx;
+    (stageRunning, stageIdx) = currentStage();
+
+    require(stageRunning, "no stage is currently running");
+    require(stageIdx == 0, "manual transfer allowed during first stage only");
     require(tokensCrowdsalePurchased.add(_tokenAmount) <= reservedTokensCrowdsalePurchase, "not enough tokens to manually transfer");
     tokensCrowdsalePurchased = tokensCrowdsalePurchased.add(_tokenAmount);
 
@@ -145,7 +131,12 @@ contract WAS_Crowdsale is FinalizableCrowdsale, WhitelistedCrowdsale, Destructib
   )
     internal
   {
-    require(_tokenAmount >= stagePurchaseTokensMinimum[currentStage()], "token amount is less than minimum for stage");
+    bool stageRunning;
+    uint256 stageIdx;
+    (stageRunning, stageIdx) = currentStage();
+
+    require(stageRunning, "no stage is currently running");
+    require(_tokenAmount >= stagePurchaseTokensMinimum[stageIdx], "token amount is less than minimum for stage");
 
     require(tokensCrowdsalePurchased.add(_tokenAmount) <= reservedTokensCrowdsalePurchase, "not enough tokens to purchase");
     tokensCrowdsalePurchased = tokensCrowdsalePurchased.add(_tokenAmount);

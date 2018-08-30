@@ -2,16 +2,31 @@ pragma solidity ^0.4.24;
 
 
 import "./WAS_CrowdsaleReservations.sol";
-import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/crowdsale/distribution/FinalizableCrowdsale.sol";
 
 
-contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
+contract WAS_Crowdsale_Stages is FinalizableCrowdsale, WAS_CrowdsaleReservations {
   uint256[] rateETH;
   uint256[] openingTimings;
   uint256[] closingTimings;
-  uint256[] stagePurchaseTokensMinimum;
+  uint256[] stagePurchaseTokensMinimum; //  TODO: test
 
-  constructor(uint256[] _rateETH, uint256[] _openingTimings, uint256[] _closingTimings) public {
+  /**
+   * @dev Reverts if not in crowdsale time range.
+   */
+  modifier onlyWhileOpen {
+    // solium-disable-next-line security/no-block-members
+    bool stageRunning;
+    uint256 stageIdx;
+    (stageRunning, stageIdx) = currentStage();
+
+    require(stageRunning, "no stage is currently running");
+    _;
+  }
+
+  constructor(uint256[] _rateETH, uint256[] _openingTimings, uint256[] _closingTimings)
+  TimedCrowdsale(_openingTimings[0], _closingTimings[_closingTimings.length - 1])
+  public {
     validateRates(_rateETH);
     validateOpeningAndClosingTimings(_openingTimings, _closingTimings);
 
@@ -22,12 +37,24 @@ contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
   }
 
   /**
+   * @dev Determines if crowdsale has started.
+   * @return Whether crowdsale has started
+   */
+  function hasOpened() public view returns (bool) {
+    return now >= openingTime;
+  }
+
+  /**
    * @dev Determines rateETH for current stage.
    * @return Current rateETH
    */
   function currentRateETH() public view returns (uint256) {
-    uint256 stage = currentStage();
-    return rateETH[stage];
+    bool stageRunning;
+    uint256 stageIdx;
+    (stageRunning, stageIdx) = currentStage();
+
+    require(stageRunning, "no stage is currently running");
+    return rateETH[stageIdx];
   }
 
   /**
@@ -36,31 +63,43 @@ contract WAS_Crowdsale_Stages is WAS_CrowdsaleReservations, Ownable {
    * @return Current discount
    */
   function currentDiscount(uint256 _tokenPurchasedAmount) public view returns (uint256) {
-    uint256 stage = currentStage();
+    bool stageRunning;
+    uint256 stageIdx;
+    (stageRunning, stageIdx) = currentStage();
 
-    return discountPercentForStage(stage, _tokenPurchasedAmount);
+    require(stageRunning, "no stage is currently running");
+
+    return discountPercentForStage(stageIdx, _tokenPurchasedAmount);
   }
 
   /**
    * @dev Determines current stage. Throws if no stage is currently open.
    * @return Current stage
    */
-  function currentStage() public view returns (uint256) {
+  function currentStage() public view returns (bool, uint256) {
     for (uint256 i = 0; i < closingTimings.length; i ++) {
-      if (block.timestamp <= closingTimings[i]) {
-        require(block.timestamp >= openingTimings[i], "now is not in single stage range");
-
-        return i;
+      if (block.timestamp <= closingTimings[i] && block.timestamp >= openingTimings[i]) {
+          return(true, i);
       }
     }
 
-    revert();
+    return(false, 0);
   }
 
+  /**
+   * @dev Updates rateETH for stage idx.
+   * @param _stage Stage idx
+   * @param _rateETH rateETH value
+   */
   function updateStageRateETH(uint256 _stage, uint256 _rateETH) public onlyOwner {
     rateETH[_stage] = _rateETH;
   } 
 
+  /**
+   * @dev Updates opening and closing timings.
+   * @param _openingTimings Opening timings
+   * @param _closingTimings Closing timings
+   */
   function updateOpeningAndClosingTimings(uint256[] _openingTimings, uint256[] _closingTimings) public onlyOwner {
     validateOpeningAndClosingTimings(_openingTimings, _closingTimings);
 
