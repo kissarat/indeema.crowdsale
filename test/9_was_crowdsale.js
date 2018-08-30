@@ -99,7 +99,7 @@ contract("Crowdsale", (accounts) => {
 
             await crowdsale.manualTransfer(acc_2, tokens_2);
 
-            //  move to second stage
+            //  move to stage 1
             increaseTimeTo(openingTimings[1] + duration.minutes(1));
             await expectThrow(crowdsale.manualTransfer(acc_2, tokens_2), "should throw on manual transfer after first tage");
         });
