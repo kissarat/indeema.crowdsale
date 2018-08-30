@@ -24,6 +24,11 @@ contract WAS_Crowdsale_Stages is FinalizableCrowdsale, WAS_CrowdsaleReservations
     _;
   }
 
+  /**
+   * @param _rateETH Number of token units a buyer gets per ETH for each stage
+   * @param _openingTimings Crowdsale stages opening time
+   * @param _closingTimings Crowdsale stages closing time
+   */
   constructor(uint256[] _rateETH, uint256[] _openingTimings, uint256[] _closingTimings)
   TimedCrowdsale(_openingTimings[0], _closingTimings[_closingTimings.length - 1])
   public {

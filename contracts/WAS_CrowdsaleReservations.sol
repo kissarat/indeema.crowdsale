@@ -12,6 +12,9 @@ contract WAS_CrowdsaleReservations {
   uint256 public tokensCrowdsalePurchased;
   uint256 public reservedTokensCrowdsalePurchase;
 
+  /**
+   * @param _totalSupply Maximum token unit amount
+   */
   constructor(uint256 _totalSupply) public {
     calculateReservations(_totalSupply);
   }

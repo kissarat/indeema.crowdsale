@@ -11,6 +11,13 @@ import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Destructible.s
 contract WAS_Crowdsale is WhitelistedCrowdsale, Destructible, Pausable, WAS_Crowdsale_Stages {
   WAS_Token token;
 
+  /**
+   * @param _wallet Address where collected funds will be forwarded to
+   * @param _token Address of the token being sold
+   * @param _rateETH Number of token units a buyer gets per ETH for each stage
+   * @param _openingTimings Crowdsale stages opening time
+   * @param _closingTimings Crowdsale stages closing time
+   */
   constructor(address _wallet, ERC20 _token, uint256[] _rateETH, uint256[] _openingTimings, uint256[] _closingTimings) 
   Crowdsale(1, _wallet, _token)
   WAS_Crowdsale_Stages(_rateETH, _openingTimings, _closingTimings)
@@ -52,19 +59,6 @@ contract WAS_Crowdsale is WhitelistedCrowdsale, Destructible, Pausable, WAS_Crow
     token.transfer(_to, _tokenAmount);
   }
 
-
-  /**
-   * @dev Can be overridden to add finalization logic. The overriding function
-   * should call super.finalization() to ensure the chain of finalization is
-   * executed entirely.
-   */
-  function finalization() internal {
-    uint256 unpurchasedTokens = token.balanceOf(address(this));
-    token.transfer(owner, unpurchasedTokens);
-
-    super.finalization();
-  }
-
    /**
    * @dev Transfers the current balance to the owner and terminates the contract.
    */
@@ -86,6 +80,17 @@ contract WAS_Crowdsale is WhitelistedCrowdsale, Destructible, Pausable, WAS_Crow
     selfdestruct(_recipient);
   }
 
+  /**
+   * @dev Can be overridden to add finalization logic. The overriding function
+   * should call super.finalization() to ensure the chain of finalization is
+   * executed entirely.
+   */
+  function finalization() internal {
+    uint256 unpurchasedTokens = token.balanceOf(address(this));
+    token.transfer(owner, unpurchasedTokens);
+
+    super.finalization();
+  }
 
   /**
    * @dev Extend parent behavior requiring crowdsale to be unpaused.
