@@ -9,7 +9,7 @@ contract WAS_Crowdsale_Stages is FinalizableCrowdsale, WAS_CrowdsaleReservations
   uint256[] rateETH;
   uint256[] openingTimings;
   uint256[] closingTimings;
-  uint256[] stagePurchaseTokensMinimum; //  TODO: test
+  uint256[] stagePurchaseTokensMinimum;
 
   /**
    * @dev Reverts if not in crowdsale time range.
