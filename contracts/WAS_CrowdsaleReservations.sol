@@ -16,6 +16,9 @@ contract WAS_CrowdsaleReservations {
     calculateReservations(_totalSupply);
   }
 
+  /**
+   * @dev Calculates and sets token reservations.
+   */
   function calculateReservations(uint256 _totalSupply) private {
     reservedTokensTeam = _totalSupply.mul(reserveTokensTeamPercent).div(100);
     reservedTokensCrowdsalePurchase = 50 * (10**6); //  50m
