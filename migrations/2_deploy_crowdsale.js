@@ -54,9 +54,9 @@ module.exports = function (deployer, network, accounts) {
 
         await deployer.deploy(WAS_Crowdsale, WALLET, token.address, RATES_ETH, openingTimings, closingTimings);
         let crowdsale = await WAS_Crowdsale.deployed();
-        //  1
+        //  1 - transfer ownership to crowdsale
         await token.transferOwnership(crowdsale.address);
-        //  2
+        //  2 - mint total supply tokens (minus team tokens) to crowdsale address & mint team tokens to team address
         await crowdsale.mintTotalSupplyAndTeam(TEAM_WALLET);
     });
 };
