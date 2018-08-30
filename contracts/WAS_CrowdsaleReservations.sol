@@ -6,7 +6,7 @@ import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract WAS_CrowdsaleReservations {
   using SafeMath for uint256;
 
-  uint256 public reserveTokensTeamPercent = 5;
+  uint256 public reserveTokensTeamPercent = 5;  //  13013033 tokens
   uint256 public reservedTokensTeam;
 
   uint256 public tokensCrowdsalePurchased;
