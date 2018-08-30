@@ -3,9 +3,6 @@ const WAS_Crowdsale = artifacts.require("WAS_Crowdsale");
 
 const BigNumber = require("bignumber.js");
 
-import mockToken from "./helpers/mocks/mockToken";
-import mockCrowdsale from "./helpers/mocks/mockCrowdsale";
-
 import expectThrow from './helpers/expectThrow';
 import {
     advanceBlock

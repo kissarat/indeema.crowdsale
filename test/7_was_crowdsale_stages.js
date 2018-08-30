@@ -2,8 +2,6 @@ const WAS_Token = artifacts.require("WAS_Token");
 const WAS_Crowdsale = artifacts.require("WAS_Crowdsale");
 const BigNumber = require("bignumber.js");
 
-import mockCrowdsale from "./helpers/mocks/mockCrowdsale";
-
 import expectThrow from './helpers/expectThrow';
 import {
   advanceBlock
@@ -20,8 +18,6 @@ contract("Before open", (accounts) => {
   const WHITELISTED_1 = accounts[1];
   let openingTimings = [];
   let closingTimings = [];
-
-  let mockCrowdsaleData = mockCrowdsale();
 
   beforeEach("setup", async () => {
     await advanceBlock();
