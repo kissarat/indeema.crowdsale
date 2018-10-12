@@ -15,7 +15,21 @@ require('babel-polyfill');
  *   },
  */
 
+const HOSTNAME = "localhost";
+
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
+  networks: {
+    private: {
+        host: process.env.ETH_HOSTNAME || HOSTNAME,
+        port: +process.env.ETH_PORT || 7545, // default for Ganache
+        network_id: process.env.ETH_NETWORK_ID || 1
+    },
+    ropsten: {
+        host: process.env.ETH_HOSTNAME || HOSTNAME,
+        port: +process.env.ETH_PORT || 8545, // default for geth & parity
+        network_id: process.env.ETH_NETWORK_ID || 2
+    }
+  }
 };
