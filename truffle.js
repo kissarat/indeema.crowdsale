@@ -1,19 +1,10 @@
 require('babel-register');
 require('babel-polyfill');
+const web3 = require("web3");
+const HDWalletProvider = require("truffle-hdwallet-provider");
 
-/*
- * NB: since truffle-hdwallet-provider 0.0.5 you must wrap HDWallet providers in a 
- * function when declaring them. Failure to do so will cause commands to hang. ex:
- * ```
- * mainnet: {
- *     provider: function() { 
- *       return new HDWalletProvider(mnemonic, 'https://mainnet.infura.io/<infura-key>') 
- *     },
- *     network_id: '1',
- *     gas: 4500000,
- *     gasPrice: 10000000000,
- *   },
- */
+require('dotenv').config();
+
 
 const HOSTNAME = "localhost";
 
@@ -27,9 +18,19 @@ module.exports = {
         network_id: process.env.ETH_NETWORK_ID || 1
     },
     ropsten: {
-        host: process.env.ETH_HOSTNAME || HOSTNAME,
-        port: +process.env.ETH_PORT || 8545, // default for geth & parity
-        network_id: process.env.ETH_NETWORK_ID || 2
+        provider() {
+          return new HDWalletProvider(
+              process.env.ROPSTEN_MNEMONIC,
+              "https://ropsten.infura.io/v3/" + process.env.INFURA_API_KEY
+          );
+        },
+        // host: process.env.ETH_HOSTNAME || HOSTNAME,
+        // port: +process.env.ETH_PORT || 8545, // default for geth & parity
+        network_id: process.env.ETH_NETWORK_ID || 2,
+        // gas: 7500000,
+        from: '0x7fcd15dc70bada79a798a329ee9f988b152863eb',
+        gas: 4698712, //4700000
+        // gasPrice: web3.toWei("1000000000", "gwei"),
     }
   }
 };
